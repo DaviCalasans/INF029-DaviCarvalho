@@ -7,11 +7,43 @@ typedef struct
 {
     int id;
     int matricula;
-    char nome[50];
-    char sexo[1];
-    char data_nascimento[10];
-    char cpf[11];
+    char nome[100];
+    char sexo;
+    char data_nascimento[11];
+    char cpf[12];
 } Aluno;
+
+void listar_alunos(int qtdAlunos, Aluno * listaAlunos)
+{
+    for (int i = 0; i < qtdAlunos; i++)
+    {
+        printf("ID: %d\n", listaAlunos[i].id);
+        printf("Matricula aluno: %d\n", listaAlunos[i].matricula);
+        printf("Nome aluno: %s\n", listaAlunos[i].nome);
+        printf("Sexo aluno: %c\n", listaAlunos[i].sexo);
+        printf("Data de Nascimento aluno: %s\n", listaAlunos[i].data_nascimento);
+        printf("CPF aluno: %s\n", listaAlunos[i].cpf);
+    }
+};
+
+void busca_aluno_por_id(int qtdAlunos, Aluno * listaAlunos, int id)
+{
+    for (int i = 0; i < qtdAlunos; i++)
+    {
+        if (id == listaAlunos[i].id)
+        {
+            printf("ID: %d\n", listaAlunos[i].id);
+            printf("Matricula aluno: %d\n", listaAlunos[i].matricula);
+            printf("Nome aluno: %s\n", listaAlunos[i].nome);
+            printf("Sexo aluno: %c\n", listaAlunos[i].sexo);
+            printf("Data de Nascimento aluno: %s\n", listaAlunos[i].data_nascimento);
+            printf("CPF aluno: %s\n", listaAlunos[i].cpf);
+            break;
+        } else {
+            printf("ID %d não encontrado!", id);
+        }
+    }
+}
 
 int main()
 {
@@ -19,6 +51,7 @@ int main()
     int opcao;
     int qtdAlunos = 0;
     int codigoAluno = 1;
+    int idAlunoEscolhido;
 
     Aluno listaAlunos[TAM_LISTA_ALUNOS];
 
@@ -28,7 +61,7 @@ int main()
         printf("0 - para encerrar\n");
         printf("1 - para cadastrar aluno\n");
         printf("2 - para listar aluno\n");
-        printf("3 - para cadastrar disciplina\n");
+        printf("3 - para atualizar aluno\n");
         scanf("%d", &opcao);
 
         switch (opcao)
@@ -73,14 +106,24 @@ int main()
             }
             else
             {
-                for (int i = 0; i < qtdAlunos; i++)
-                {
-                    printf("Matricula aluno: %d\n", listaAlunos[i].matricula);
-                    printf("Nome aluno: %s\n", listaAlunos[i].nome);
-                    printf("Sexo aluno: %c\n", listaAlunos[i].sexo);
-                    printf("Data de Nascimento aluno: %s\n", listaAlunos[i].data_nascimento);
-                    printf("CPF aluno: %s\n", listaAlunos[i].cpf);
-                }
+                listar_alunos(qtdAlunos, listaAlunos);
+            }
+            break;
+
+        case 3:
+            if (qtdAlunos == 0)
+            {
+                printf("A lista de alunos está vazia\n");
+            }
+            else
+            {
+                printf("Qual aluno você quer atualizar?\n");
+                listar_alunos(qtdAlunos, listaAlunos);
+                scanf("%d", &idAlunoEscolhido);
+                printf("O id escolhido foi: %d", idAlunoEscolhido);
+                busca_aluno_por_id(qtdAlunos, listaAlunos, idAlunoEscolhido);
+                printf("Qual informação você quer atualizar?");
+                
             }
             break;
 
