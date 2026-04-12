@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define TAM_LISTA_ALUNOS 3
+#define TAM_LISTA_PROFESSOR 3
 
 typedef struct
 {
@@ -13,38 +15,42 @@ typedef struct
     char cpf[12];
 } Aluno;
 
+typedef struct
+{
+    int id;
+    int matricula;
+    char nome[100];
+    char sexo;
+    char data_nascimento[11];
+    char cpf[12];
+} Professor;
+
 void listar_alunos(int qtdAlunos, Aluno *listaAlunos)
 {
     for (int i = 0; i < qtdAlunos; i++)
     {
-        printf("ID: %d\n", listaAlunos[i].id);
-        printf("Matricula aluno: %d\n", listaAlunos[i].matricula);
-        printf("Nome aluno: %s\n", listaAlunos[i].nome);
-        printf("Sexo aluno: %c\n", listaAlunos[i].sexo);
-        printf("Data de Nascimento aluno: %s\n", listaAlunos[i].data_nascimento);
-        printf("CPF aluno: %s\n", listaAlunos[i].cpf);
+        printf("ID: %d | Matricula aluno: %d | Nome aluno: %s | Sexo aluno: %c | Data de Nascimento aluno: %s | CPF aluno: %s\n",
+               listaAlunos[i].id,
+               listaAlunos[i].matricula,
+               listaAlunos[i].nome,
+               listaAlunos[i].sexo,
+               listaAlunos[i].data_nascimento,
+               listaAlunos[i].cpf);
     }
 };
 
-void busca_aluno_por_id(int qtdAlunos, Aluno *listaAlunos, int id)
+Aluno *busca_aluno_por_id(int qtdAlunos, Aluno *listaAlunos, int id)
 {
+    bool achou = false;
     for (int i = 0; i < qtdAlunos; i++)
     {
         if (id == listaAlunos[i].id)
         {
-            printf("ID: %d\n", listaAlunos[i].id);
-            printf("Matricula aluno: %d\n", listaAlunos[i].matricula);
-            printf("Nome aluno: %s\n", listaAlunos[i].nome);
-            printf("Sexo aluno: %c\n", listaAlunos[i].sexo);
-            printf("Data de Nascimento aluno: %s\n", listaAlunos[i].data_nascimento);
-            printf("CPF aluno: %s\n", listaAlunos[i].cpf);
-            break;
-        }
-        else
-        {
-            printf("ID %d não encontrado!", id);
+            return &listaAlunos[i];
         }
     }
+
+    return NULL;
 }
 
 void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno, int *idAlunoEscolhido)
@@ -106,21 +112,74 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno, int *idAlu
             }
             break;
 
-            case 3:
-                if (qtdAlunos == 0)
+        case 3:
+            if (qtdAlunos == 0)
+            {
+                printf("A lista de alunos está vazia\n");
+            }
+            else
+            {
+                int opcaoAtualizar;
+                printf("Qual aluno você quer atualizar?\n");
+                listar_alunos(*qtdAlunos, listaAlunos);
+                scanf("%d", idAlunoEscolhido);
+                printf("O id escolhido foi: %d\n", *idAlunoEscolhido);
+                Aluno *alunoEncontrado = busca_aluno_por_id(*qtdAlunos, listaAlunos, *idAlunoEscolhido);
+                if (alunoEncontrado != NULL)
                 {
-                    printf("A lista de alunos está vazia\n");
+                    printf("Aluno encontrado!\n");
+                    printf("Matricula: %d | CPF: %c\n", alunoEncontrado->matricula, alunoEncontrado->cpf);
+                    printf("Qual informação você quer atualizar?\n");
+                    printf("1 - para Matrícula\n");
+                    printf("2 - para Nome\n");
+                    printf("3 - para Data de Nascimento\n");
+                    printf("4 - para Sexo\n");
+                    printf("5 - para CPF\n");
+                    scanf("%d", &opcaoAtualizar);
                 }
                 else
                 {
-                    printf("Qual aluno você quer atualizar?\n");
-                    listar_alunos(*qtdAlunos, listaAlunos);
-                    scanf("%d", idAlunoEscolhido);
-                    printf("O id escolhido foi: %d", idAlunoEscolhido);
-                    busca_aluno_por_id(*qtdAlunos, listaAlunos, *idAlunoEscolhido);
-                    printf("Qual informação você quer atualizar?");
+                    printf("Erro: Aluno com ID %d nao encontrado.\n", *idAlunoEscolhido);
                 }
-                break;
+
+                switch (opcaoAtualizar)
+                {
+                case 1:
+                    printf("Digite a nova Matricula: ");
+                    scanf("%d", &alunoEncontrado->matricula);
+                    printf("Matricula atualizada com sucesso!\n");
+                    break;
+
+                case 2:
+                    printf("Digite o novo Nome: ");
+                    scanf(" %[^\n]", alunoEncontrado->nome);
+                    printf("Nome atualizado com sucesso!\n");
+                    break;
+
+                case 3:
+                    printf("Digite a nova Data de Nascimento (DD/MM/AAAA): ");
+                    scanf(" %10s", alunoEncontrado->data_nascimento);
+                    printf("Data de Nascimento atualizada com sucesso!\n");
+                    break;
+
+                case 4:
+                    printf("Digite o novo Sexo (M/F): ");
+                    scanf(" %c", &alunoEncontrado->sexo);
+                    printf("Sexo atualizado com sucesso!\n");
+                    break;
+
+                case 5:
+                    printf("Digite o novo CPF (apenas numeros): ");
+                    scanf(" %11s", alunoEncontrado->cpf);
+                    printf("CPF atualizado com sucesso!\n");
+                    break;
+
+                default:
+                    printf("Opção inválida! Nenhuma alteração foi feita.\n");
+                    break;
+                }
+            }
+            break;
 
         default:
             printf("Opção inválida\n");
@@ -129,6 +188,9 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno, int *idAlu
     }
 }
 
+void menuProfessor(Professor *listaProfessores, int *qtdProfessor, int *codigoProfessor, int *idProfessorEscolhido)
+{
+}
 int main()
 {
     int sair = 0;
@@ -137,14 +199,21 @@ int main()
     int codigoAluno = 1;
     int idAlunoEscolhido;
 
+    int qtdProfessores = 0;
+    int codigoProfessor = 1;
+    int idProfessorEscolhido;
     Aluno *listaAlunos;
     listaAlunos = malloc(TAM_LISTA_ALUNOS * sizeof(Aluno));
+
+    Professor *listaProfessores;
+    listaProfessores = malloc(TAM_LISTA_PROFESSOR * sizeof(Professor));
 
     while (sair == 0)
     {
         printf("Digite uma opção:\n");
         printf("0 - para encerrar\n");
         printf("1 - Menu aluno\n");
+        printf("2 - Menu professor\n");
 
         scanf("%d", &opcao);
         switch (opcao)
@@ -154,6 +223,9 @@ int main()
             break;
         case 1:
             menuAlunos(listaAlunos, &qtdAlunos, &codigoAluno, &idAlunoEscolhido);
+            break;
+        case 2:
+            // menuProfessores(listaProfessores, &qtdProfessores, &codigoProfessor,  &idProfessorEscolhido);
             break;
         default:
             printf("Opção inválida\n");
