@@ -1,29 +1,6 @@
+#include "aluno.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-
-#define TAM_LISTA_ALUNOS 3
-#define TAM_LISTA_PROFESSOR 3
-
-typedef struct
-{
-    int id;
-    int matricula;
-    char nome[100];
-    char sexo;
-    char data_nascimento[11];
-    char cpf[12];
-} Aluno;
-
-typedef struct
-{
-    int id;
-    int matricula;
-    char nome[100];
-    char sexo;
-    char data_nascimento[11];
-    char cpf[12];
-} Professor;
 
 bool deletar_aluno(int *qtdAlunos, Aluno *listaAlunos, int id)
 {
@@ -223,53 +200,4 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno)
             break;
         }
     }
-}
-
-void menuProfessor(Professor *listaProfessores, int *qtdProfessor, int *codigoProfessor, int *idProfessorEscolhido)
-{
-}
-int main()
-{
-    int sair = 0;
-    int opcao;
-    int qtdAlunos = 0;
-    int codigoAluno = 1;
-    int idAlunoEscolhido;
-
-    int qtdProfessores = 0;
-    int codigoProfessor = 1;
-    int idProfessorEscolhido;
-    Aluno *listaAlunos;
-    listaAlunos = malloc(TAM_LISTA_ALUNOS * sizeof(Aluno));
-
-    Professor *listaProfessores;
-    listaProfessores = malloc(TAM_LISTA_PROFESSOR * sizeof(Professor));
-
-    while (sair == 0)
-    {
-        printf("Digite uma opção:\n");
-        printf("0 - para encerrar\n");
-        printf("1 - Menu aluno\n");
-        printf("2 - Menu professor\n");
-
-        scanf("%d", &opcao);
-        switch (opcao)
-        {
-        case 0:
-            sair = 1;
-            break;
-        case 1:
-            menuAlunos(listaAlunos, &qtdAlunos, &codigoAluno);
-            break;
-        case 2:
-            break;
-        default:
-            printf("Opção inválida\n");
-            break;
-        }
-    }
-
-    free(listaAlunos);
-
-    return 0;
 }
