@@ -2,6 +2,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void listar_disciplinas_lotadas_com_prof(int qtdDisciplinas, Disciplina *listaDisciplinas) {
+    int encontradas = 0;
+
+    printf("\n==================================================\n");
+    printf("     DISCIPLINAS LOTADAS E COM PROFESSOR (40+ vagas)\n");
+    printf("==================================================\n");
+
+    for (int i = 0; i < qtdDisciplinas; i++) {
+        
+        if (listaDisciplinas[i].professor_responsavel != NULL && 
+            listaDisciplinas[i].qtd_alunos_matriculados >= 40) {
+            
+            printf("ID: %d | Disciplina: %-15s | Prof: %-15s | Vagas Ocupadas: %d\n",
+                   listaDisciplinas[i].id,
+                   listaDisciplinas[i].nome,
+                   listaDisciplinas[i].professor_responsavel->nome,
+                   listaDisciplinas[i].qtd_alunos_matriculados);
+            encontradas++;
+        }
+    }
+
+    if (encontradas == 0) {
+        printf(" -> Nenhuma disciplina atingiu 40 alunos com professor vinculado.\n");
+    }
+    printf("==================================================\n");
+}
 void detalhar_disciplina(Disciplina *d) {
     printf("\n==================================================\n");
     printf("              FICHA DA DISCIPLINA                 \n");
@@ -36,6 +62,7 @@ void detalhar_disciplina(Disciplina *d) {
 bool remover_aluno_da_disciplina(Disciplina *d, int idAluno) {
     for (int i = 0; i < d->qtd_alunos_matriculados; i++) {
         if (d->alunos_matriculados[i]->id == idAluno) {
+            d->alunos_matriculados[i]->qtd_disciplinas_matriculadas--;
             
             for (int j = i; j < d->qtd_alunos_matriculados - 1; j++) {
                 d->alunos_matriculados[j] = d->alunos_matriculados[j + 1];
@@ -66,6 +93,7 @@ bool matricular_aluno_na_disciplina(Disciplina *d, Aluno *a) {
 
     d->alunos_matriculados[d->qtd_alunos_matriculados] = a;
     d->qtd_alunos_matriculados++;
+    a->qtd_disciplinas_matriculadas++;
     return true;
 }
 
@@ -420,6 +448,16 @@ void menuDisciplina(Disciplina *listaDisciplinas, int *qtdDisciplinas, int *codi
                 detalhar_disciplina(discEncontrada);
             } else {
                 printf("Erro: Disciplina com ID %d nao encontrada.\n", idBusca);
+            }
+            break;
+        }
+
+        case 8:
+        {
+            if (*qtdDisciplinas == 0) {
+                printf("A lista de disciplinas esta vazia.\n");
+            } else {
+                listar_disciplinas_lotadas_com_prof(*qtdDisciplinas, listaDisciplinas);
             }
             break;
         }

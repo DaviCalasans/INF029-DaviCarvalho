@@ -118,6 +118,8 @@ int main()
         }
     }
 
-        free(listaAlunos);
-        return 0;
-    }
+    free(listaAlunos);
+    free(listaProfessores);
+    free(listaDisciplinas);
+    return 0;
+}

@@ -5,15 +5,18 @@
 
 #define TAM_LISTA_ALUNOS 3
 
-typedef struct {
+typedef struct
+{
     int id;
     int matricula;
     char nome[100];
     char sexo;
     Data data_nascimento;
     char cpf[12];
+    int qtd_disciplinas_matriculadas;
 } Aluno;
 
+void listar_alunos_poucas_disciplinas(int qtdAlunos, Aluno *listaAlunos);
 void listar_aniversariantes_do_mes(int qtdAlunos, Aluno *listaAlunos, int mesBusca);
 void listar_alunos_por_data(int qtdAlunos, Aluno *listaAlunos);
 void listar_alunos_ordenados_por_nome(int qtdAlunos, Aluno *listaAlunos);

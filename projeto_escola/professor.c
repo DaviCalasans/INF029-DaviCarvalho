@@ -4,24 +4,28 @@
 #include <string.h>
 #include <ctype.h>
 
-void listar_aniversariantes_do_mes_prof(int qtdProfessores, Professor *listaProfessores, int mesBusca) {
+void listar_aniversariantes_do_mes_prof(int qtdProfessores, Professor *listaProfessores, int mesBusca)
+{
     int encontrados = 0;
-    char *meses[] = {"", "Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", 
+    char *meses[] = {"", "Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho",
                      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
 
     printf("\n--- ANIVERSARIANTES DE %s (PROFESSORES) ---\n", meses[mesBusca]);
 
-    for (int i = 0; i < qtdProfessores; i++) {
-        if (listaProfessores[i].data_nascimento.mes == mesBusca) {
-            printf("Dia %02d - %s (ID: %d)\n", 
-                   listaProfessores[i].data_nascimento.dia, 
-                   listaProfessores[i].nome, 
+    for (int i = 0; i < qtdProfessores; i++)
+    {
+        if (listaProfessores[i].data_nascimento.mes == mesBusca)
+        {
+            printf("Dia %02d - %s (ID: %d)\n",
+                   listaProfessores[i].data_nascimento.dia,
+                   listaProfessores[i].nome,
                    listaProfessores[i].id);
             encontrados++;
         }
     }
 
-    if (encontrados == 0) {
+    if (encontrados == 0)
+    {
         printf(" -> Nenhum professor faz aniversario neste mes.\n");
     }
     printf("-------------------------------------------------\n");
@@ -172,6 +176,7 @@ void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigo
         printf("5 - Para listar por sexo\n");
         printf("6 - Para listar ordenado por nome\n");
         printf("7 - Para listar ordenado por data de nascimento\n");
+        printf("8 - Para listar aniversariantes do mês\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
@@ -200,13 +205,25 @@ void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigo
                 scanf(" %c", &listaProfessores[*qtdProfessores].sexo);
 
                 printf("Data de Nascimento (dd/mm/aaaa):\n");
-                scanf("%02d/%02d/%04d",
+                scanf("%d/%d/%d",
                       &listaProfessores[*qtdProfessores].data_nascimento.dia,
                       &listaProfessores[*qtdProfessores].data_nascimento.mes,
                       &listaProfessores[*qtdProfessores].data_nascimento.ano);
+                char cpfTemp[30];
 
-                printf("CPF (somente numeros):\n");
-                scanf(" %11s", listaProfessores[*qtdProfessores].cpf);
+                do
+                {
+                    printf("CPF (exatamente 11 numeros, sem pontos ou tracos):\n");
+                    scanf(" %29s", cpfTemp); // Lê até 29 caracteres com segurança
+
+                    if (strlen(cpfTemp) != 11)
+                    {
+                        printf("Erro: O CPF deve conter exatamente 11 digitos! Voce digitou %zu.\n", strlen(cpfTemp));
+                    }
+
+                } while (strlen(cpfTemp) != 11);
+
+                strcpy(listaProfessores[*qtdProfessores].cpf, cpfTemp);
 
                 (*qtdProfessores)++;
                 (*codigoProfessor)++;
@@ -280,10 +297,23 @@ void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigo
                         printf("Sexo atualizado com sucesso!\n");
                         break;
                     case 5:
-                        printf("Digite o novo CPF (apenas numeros): ");
-                        scanf(" %11s", profEncontrado->cpf);
+                    {
+                        char cpfTemp[30];
+                        do
+                        {
+                            printf("Digite o novo CPF (exatamente 11 numeros, sem pontos ou tracos):\n");
+                            scanf(" %29s", cpfTemp);
+
+                            if (strlen(cpfTemp) != 11)
+                            {
+                                printf("Erro: O CPF deve conter exatamente 11 digitos! Voce digitou %zu.\n", strlen(cpfTemp));
+                            }
+                        } while (strlen(cpfTemp) != 11);
+
+                        strcpy(profEncontrado->cpf, cpfTemp);
                         printf("CPF atualizado com sucesso!\n");
                         break;
+                    }
                     default:
                         printf("Opcao invalida! Nenhuma alteracao foi feita.\n");
                         break;
@@ -368,15 +398,20 @@ void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigo
 
         case 8:
         {
-            if (*qtdProfessores == 0) {
+            if (*qtdProfessores == 0)
+            {
                 printf("A lista de professores esta vazia.\n");
-            } else {
+            }
+            else
+            {
                 int mes;
-                do {
+                do
+                {
                     printf("Digite o numero do mes que deseja buscar (1 a 12): ");
                     scanf("%d", &mes);
-                    
-                    if (mes < 1 || mes > 12) {
+
+                    if (mes < 1 || mes > 12)
+                    {
                         printf("Erro: Mes invalido! Digite um valor entre 1 e 12.\n");
                     }
                 } while (mes < 1 || mes > 12);

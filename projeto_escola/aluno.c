@@ -4,24 +4,52 @@
 #include <ctype.h>
 #include <string.h>
 
-void listar_aniversariantes_do_mes(int qtdAlunos, Aluno *listaAlunos, int mesBusca) {
+void listar_alunos_poucas_disciplinas(int qtdAlunos, Aluno *listaAlunos)
+{
     int encontrados = 0;
-    char *meses[] = {"", "Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", 
+
+    printf("\n--- ALUNOS COM MENOS DE 3 MATRICULAS ---\n");
+    for (int i = 0; i < qtdAlunos; i++)
+    {
+        if (listaAlunos[i].qtd_disciplinas_matriculadas < 3)
+        {
+            printf("ID: %d | Nome: %-20s | Matriculas: %d\n",
+                   listaAlunos[i].id,
+                   listaAlunos[i].nome,
+                   listaAlunos[i].qtd_disciplinas_matriculadas);
+            encontrados++;
+        }
+    }
+
+    if (encontrados == 0)
+    {
+        printf("Todos os alunos estao matriculados em 3 ou mais disciplinas.\n");
+    }
+    printf("------------------------------------------\n");
+}
+
+void listar_aniversariantes_do_mes(int qtdAlunos, Aluno *listaAlunos, int mesBusca)
+{
+    int encontrados = 0;
+    char *meses[] = {"", "Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho",
                      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
 
     printf("\n--- ANIVERSARIANTES DE %s ---\n", meses[mesBusca]);
 
-    for (int i = 0; i < qtdAlunos; i++) {
-        if (listaAlunos[i].data_nascimento.mes == mesBusca) {
-            printf("Dia %02d - %s (ID: %d)\n", 
-                   listaAlunos[i].data_nascimento.dia, 
-                   listaAlunos[i].nome, 
+    for (int i = 0; i < qtdAlunos; i++)
+    {
+        if (listaAlunos[i].data_nascimento.mes == mesBusca)
+        {
+            printf("Dia %02d - %s (ID: %d)\n",
+                   listaAlunos[i].data_nascimento.dia,
+                   listaAlunos[i].nome,
                    listaAlunos[i].id);
             encontrados++;
         }
     }
 
-    if (encontrados == 0) {
+    if (encontrados == 0)
+    {
         printf("Nenhum aluno faz aniversario neste mes.\n");
     }
     printf("---------------------------------------\n");
@@ -178,6 +206,8 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno)
         printf("5 - para listar por sexo\n");
         printf("6 - para listar ordenado por nome\n");
         printf("7 - para listar por data de nascimento\n");
+        printf("8 - para listar aniversariantes do mês\n");
+        printf("9 - para listar alunos cadastrados em menos de 3 disciplinas\n");
         scanf("%d", &opcao);
 
         switch (opcao)
@@ -219,13 +249,28 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno)
                 listaAlunos[*qtdAlunos].sexo = sexoLido;
 
                 printf("Data de Nascimento (dd/mm/aaaa):\n");
-                scanf("%02d/%02d/%04d",
+                scanf("%d/%d/%d",
                       &listaAlunos[*qtdAlunos].data_nascimento.dia,
                       &listaAlunos[*qtdAlunos].data_nascimento.mes,
                       &listaAlunos[*qtdAlunos].data_nascimento.ano);
 
-                printf("CPF (somente números):\n");
-                scanf(" %11s", listaAlunos[*qtdAlunos].cpf);
+                char cpfTemp[30];
+
+                do
+                {
+                    printf("CPF (exatamente 11 numeros, sem pontos ou tracos):\n");
+                    scanf(" %29s", cpfTemp); // Lê até 29 caracteres com segurança
+
+                    if (strlen(cpfTemp) != 11)
+                    {
+                        printf("Erro: O CPF deve conter exatamente 11 digitos! Voce digitou %zu.\n", strlen(cpfTemp));
+                    }
+
+                } while (strlen(cpfTemp) != 11);
+
+                strcpy(listaAlunos[*qtdAlunos].cpf, cpfTemp);
+
+                listaAlunos[*qtdAlunos].qtd_disciplinas_matriculadas = 0;
 
                 (*qtdAlunos)++;
                 (*codigoAluno)++;
@@ -299,11 +344,23 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno)
                         break;
 
                     case 5:
-                        printf("Digite o novo CPF (apenas numeros): ");
-                        scanf(" %11s", alunoEncontrado->cpf);
+                    {
+                        char cpfTemp[30];
+                        do
+                        {
+                            printf("Digite o novo CPF (exatamente 11 numeros, sem pontos ou tracos):\n");
+                            scanf(" %29s", cpfTemp);
+
+                            if (strlen(cpfTemp) != 11)
+                            {
+                                printf("Erro: O CPF deve conter exatamente 11 digitos! Voce digitou %zu.\n", strlen(cpfTemp));
+                            }
+                        } while (strlen(cpfTemp) != 11);
+
+                        strcpy(alunoEncontrado->cpf, cpfTemp);
                         printf("CPF atualizado com sucesso!\n");
                         break;
-
+                    }
                     default:
                         printf("Opção inválida! Nenhuma alteração foi feita.\n");
                         break;
@@ -382,19 +439,37 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno)
         }
         case 8:
         {
-            if (*qtdAlunos == 0) {
+            if (*qtdAlunos == 0)
+            {
                 printf("A lista de alunos esta vazia.\n");
-            } else {
+            }
+            else
+            {
                 int mes;
-                do {
+                do
+                {
                     printf("Digite o numero do mes (1-12): ");
                     scanf("%d", &mes);
-                    if (mes < 1 || mes > 12) {
+                    if (mes < 1 || mes > 12)
+                    {
                         printf("Mes invalido! Digite um valor entre 1 e 12.\n");
                     }
                 } while (mes < 1 || mes > 12);
 
                 listar_aniversariantes_do_mes(*qtdAlunos, listaAlunos, mes);
+            }
+            break;
+        }
+
+        case 9:
+        {
+            if (*qtdAlunos == 0)
+            {
+                printf("A lista de alunos esta vazia.\n");
+            }
+            else
+            {
+                listar_alunos_poucas_disciplinas(*qtdAlunos, listaAlunos);
             }
             break;
         }

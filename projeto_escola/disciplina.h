@@ -18,6 +18,7 @@ typedef struct
     int qtd_alunos_matriculados;
 } Disciplina;
 
+void listar_disciplinas_lotadas_com_prof(int qtdDisciplinas, Disciplina *listaDisciplinas);
 void detalhar_disciplina(Disciplina *d);
 bool matricular_aluno_na_disciplina(Disciplina *d, Aluno *a);
 bool remover_aluno_da_disciplina(Disciplina *d, int idAluno);
