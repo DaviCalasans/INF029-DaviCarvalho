@@ -4,6 +4,7 @@
 #include "professor.h"
 #include "disciplina.h"
 
+
 int main()
 {
     int sair = 0;
@@ -39,7 +40,7 @@ int main()
             menuProfessor(listaProfessores, &qtdProfessores, &codigoProfessor);
             break;
         case 3:
-            menuDisciplina(listaDisciplinas, &qtdDisciplinas, &codigoDisciplina, listaProfessores, qtdProfessores);
+            menuDisciplina(listaDisciplinas, &qtdDisciplinas, &codigoDisciplina, listaProfessores, qtdProfessores, listaAlunos, qtdAlunos);
             break;
         }
     }
