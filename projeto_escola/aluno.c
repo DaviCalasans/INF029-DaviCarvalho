@@ -4,17 +4,44 @@
 #include <ctype.h>
 #include <string.h>
 
-int comparar_datas(Data d1, Data d2) {
-    if (d1.ano != d2.ano) return d1.ano - d2.ano;
-    
-    if (d1.mes != d2.mes) return d1.mes - d2.mes;
-    
+void listar_aniversariantes_do_mes(int qtdAlunos, Aluno *listaAlunos, int mesBusca) {
+    int encontrados = 0;
+    char *meses[] = {"", "Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", 
+                     "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
+
+    printf("\n--- ANIVERSARIANTES DE %s ---\n", meses[mesBusca]);
+
+    for (int i = 0; i < qtdAlunos; i++) {
+        if (listaAlunos[i].data_nascimento.mes == mesBusca) {
+            printf("Dia %02d - %s (ID: %d)\n", 
+                   listaAlunos[i].data_nascimento.dia, 
+                   listaAlunos[i].nome, 
+                   listaAlunos[i].id);
+            encontrados++;
+        }
+    }
+
+    if (encontrados == 0) {
+        printf("Nenhum aluno faz aniversario neste mes.\n");
+    }
+    printf("---------------------------------------\n");
+}
+
+int comparar_datas(Data d1, Data d2)
+{
+    if (d1.ano != d2.ano)
+        return d1.ano - d2.ano;
+
+    if (d1.mes != d2.mes)
+        return d1.mes - d2.mes;
+
     return d1.dia - d2.dia;
 }
 
 void listar_alunos_por_data(int qtdAlunos, Aluno *listaAlunos)
 {
-    if (qtdAlunos <= 1) {
+    if (qtdAlunos <= 1)
+    {
         listar_alunos(qtdAlunos, listaAlunos);
         return;
     }
@@ -148,7 +175,7 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno)
         printf("2 - Para listar aluno\n");
         printf("3 - Para atualizar aluno\n");
         printf("4 - Para deletar aluno\n");
-        printf("5 - para listar por Sexo\n");
+        printf("5 - para listar por sexo\n");
         printf("6 - para listar ordenado por nome\n");
         printf("7 - para listar por data de nascimento\n");
         scanf("%d", &opcao);
@@ -258,7 +285,10 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno)
 
                     case 3:
                         printf("Digite a nova Data de Nascimento (DD/MM/AAAA): ");
-                        scanf(" %10s", alunoEncontrado->data_nascimento);
+                        scanf("%02d/%02d/%04d",
+                              &alunoEncontrado->data_nascimento.dia,
+                              &alunoEncontrado->data_nascimento.mes,
+                              &alunoEncontrado->data_nascimento.ano);
                         printf("Data de Nascimento atualizada com sucesso!\n");
                         break;
 
@@ -337,7 +367,7 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno)
             }
             break;
         }
-        case 7: // LISTAR ORDENADO POR IDADE (MAIS VELHOS)
+        case 7:
         {
             if (*qtdAlunos == 0)
             {
@@ -347,6 +377,24 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno)
             {
                 // Chama a função mágica que construímos!
                 listar_alunos_por_data(*qtdAlunos, listaAlunos);
+            }
+            break;
+        }
+        case 8:
+        {
+            if (*qtdAlunos == 0) {
+                printf("A lista de alunos esta vazia.\n");
+            } else {
+                int mes;
+                do {
+                    printf("Digite o numero do mes (1-12): ");
+                    scanf("%d", &mes);
+                    if (mes < 1 || mes > 12) {
+                        printf("Mes invalido! Digite um valor entre 1 e 12.\n");
+                    }
+                } while (mes < 1 || mes > 12);
+
+                listar_aniversariantes_do_mes(*qtdAlunos, listaAlunos, mes);
             }
             break;
         }

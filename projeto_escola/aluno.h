@@ -1,14 +1,9 @@
 #ifndef ALUNO_H
 #define ALUNO_H
 #include <stdbool.h>
+#include "tipos.h"
 
 #define TAM_LISTA_ALUNOS 3
-
-typedef struct{
-    int dia;
-    int mes;
-    int ano;
-}Data;
 
 typedef struct {
     int id;
@@ -19,6 +14,7 @@ typedef struct {
     char cpf[12];
 } Aluno;
 
+void listar_aniversariantes_do_mes(int qtdAlunos, Aluno *listaAlunos, int mesBusca);
 void listar_alunos_por_data(int qtdAlunos, Aluno *listaAlunos);
 void listar_alunos_ordenados_por_nome(int qtdAlunos, Aluno *listaAlunos);
 void listar_alunos_por_sexo(int qtdAlunos, Aluno *listaAlunos, char sexoBuscado);

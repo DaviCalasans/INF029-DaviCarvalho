@@ -1,6 +1,116 @@
 #include "professor.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+void listar_aniversariantes_do_mes_prof(int qtdProfessores, Professor *listaProfessores, int mesBusca) {
+    int encontrados = 0;
+    char *meses[] = {"", "Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", 
+                     "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
+
+    printf("\n--- ANIVERSARIANTES DE %s (PROFESSORES) ---\n", meses[mesBusca]);
+
+    for (int i = 0; i < qtdProfessores; i++) {
+        if (listaProfessores[i].data_nascimento.mes == mesBusca) {
+            printf("Dia %02d - %s (ID: %d)\n", 
+                   listaProfessores[i].data_nascimento.dia, 
+                   listaProfessores[i].nome, 
+                   listaProfessores[i].id);
+            encontrados++;
+        }
+    }
+
+    if (encontrados == 0) {
+        printf(" -> Nenhum professor faz aniversario neste mes.\n");
+    }
+    printf("-------------------------------------------------\n");
+}
+int comparar_datas_prof(Data d1, Data d2)
+{
+    if (d1.ano != d2.ano)
+        return d1.ano - d2.ano;
+    if (d1.mes != d2.mes)
+        return d1.mes - d2.mes;
+    return d1.dia - d2.dia;
+}
+
+void listar_professores_por_data(int qtdProfessores, Professor *listaProfessores)
+{
+    if (qtdProfessores <= 1)
+    {
+        listar_professores(qtdProfessores, listaProfessores);
+        return;
+    }
+
+    for (int i = 0; i < qtdProfessores - 1; i++)
+    {
+        for (int j = i + 1; j < qtdProfessores; j++)
+        {
+            if (comparar_datas_prof(listaProfessores[i].data_nascimento, listaProfessores[j].data_nascimento) > 0)
+            {
+                Professor temp = listaProfessores[i];
+                listaProfessores[i] = listaProfessores[j];
+                listaProfessores[j] = temp;
+            }
+        }
+    }
+
+    printf("\n--- PROFESSORES ORDENADOS POR IDADE (Mais velhos primeiro) ---\n");
+    listar_professores(qtdProfessores, listaProfessores);
+}
+
+void listar_professores_ordenados_por_nome(int qtdProfessores, Professor *listaProfessores)
+{
+    if (qtdProfessores <= 1)
+    {
+        listar_professores(qtdProfessores, listaProfessores);
+        return;
+    }
+
+    for (int i = 0; i < qtdProfessores - 1; i++)
+    {
+        for (int j = i + 1; j < qtdProfessores; j++)
+        {
+            if (strcmp(listaProfessores[i].nome, listaProfessores[j].nome) > 0)
+            {
+                Professor temp = listaProfessores[i];
+                listaProfessores[i] = listaProfessores[j];
+                listaProfessores[j] = temp;
+            }
+        }
+    }
+
+    printf("\n--- PROFESSORES ORDENADOS DE A a Z ---\n");
+    listar_professores(qtdProfessores, listaProfessores);
+}
+
+void listar_professores_por_sexo(int qtdProfessores, Professor *listaProfessores, char sexoBuscado)
+{
+    int encontrados = 0;
+    char sexoMaiusculo = toupper(sexoBuscado);
+
+    printf("\n--- RESULTADO DA BUSCA (SEXO: %c) ---\n", sexoMaiusculo);
+
+    for (int i = 0; i < qtdProfessores; i++)
+    {
+        if (toupper(listaProfessores[i].sexo) == sexoMaiusculo)
+        {
+            printf("ID: %d | Matricula: %d | Nome: %s | Sexo: %c\n",
+                   listaProfessores[i].id,
+                   listaProfessores[i].matricula,
+                   listaProfessores[i].nome,
+                   listaProfessores[i].sexo);
+            encontrados++;
+        }
+    }
+
+    if (encontrados == 0)
+    {
+        printf(" -> Nenhum professor do sexo '%c' foi encontrado.\n", sexoMaiusculo);
+    }
+    printf("--------------------------------------\n");
+}
 
 bool deletar_professor(int *qtdProfessores, Professor *listaProfessores, int id)
 {
@@ -23,12 +133,14 @@ void listar_professores(int qtdProfessores, Professor *listaProfessores)
 {
     for (int i = 0; i < qtdProfessores; i++)
     {
-        printf("ID: %d | Matricula: %d | Nome: %s | Sexo: %c | Data de Nasc.: %s | CPF: %s\n",
+        printf("ID: %d | Matricula: %d | Nome: %s | Sexo: %c | Data de Nasc.: %02d/%02d/%04d | CPF: %s\n",
                listaProfessores[i].id,
                listaProfessores[i].matricula,
                listaProfessores[i].nome,
                listaProfessores[i].sexo,
-               listaProfessores[i].data_nascimento,
+               listaProfessores[i].data_nascimento.dia,
+               listaProfessores[i].data_nascimento.mes,
+               listaProfessores[i].data_nascimento.ano,
                listaProfessores[i].cpf);
     }
 }
@@ -48,7 +160,7 @@ Professor *busca_professor_por_id(int qtdProfessores, Professor *listaProfessore
 void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigoProfessor)
 {
     int opcao = 0;
-    
+
     while (opcao >= 0)
     {
         printf("\n--- MENU PROFESSORES ---\n");
@@ -57,6 +169,9 @@ void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigo
         printf("2 - Para listar professores\n");
         printf("3 - Para atualizar professor\n");
         printf("4 - Para deletar professor\n");
+        printf("5 - Para listar por sexo\n");
+        printf("6 - Para listar ordenado por nome\n");
+        printf("7 - Para listar ordenado por data de nascimento\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
@@ -85,7 +200,10 @@ void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigo
                 scanf(" %c", &listaProfessores[*qtdProfessores].sexo);
 
                 printf("Data de Nascimento (dd/mm/aaaa):\n");
-                scanf(" %10s", listaProfessores[*qtdProfessores].data_nascimento);
+                scanf("%02d/%02d/%04d",
+                      &listaProfessores[*qtdProfessores].data_nascimento.dia,
+                      &listaProfessores[*qtdProfessores].data_nascimento.mes,
+                      &listaProfessores[*qtdProfessores].data_nascimento.ano);
 
                 printf("CPF (somente numeros):\n");
                 scanf(" %11s", listaProfessores[*qtdProfessores].cpf);
@@ -97,7 +215,7 @@ void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigo
             break;
 
         case 2:
-        { 
+        {
             if (*qtdProfessores == 0)
             {
                 printf("A lista de professores esta vazia.\n");
@@ -111,7 +229,7 @@ void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigo
         }
 
         case 3:
-        { 
+        {
             if (*qtdProfessores == 0)
             {
                 printf("A lista de professores esta vazia.\n");
@@ -121,12 +239,12 @@ void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigo
                 int idBusca;
                 printf("Qual professor voce quer atualizar?\n");
                 listar_professores(*qtdProfessores, listaProfessores);
-                
+
                 printf("Digite o ID do professor: ");
                 scanf("%d", &idBusca);
 
                 Professor *profEncontrado = busca_professor_por_id(*qtdProfessores, listaProfessores, idBusca);
-                
+
                 if (profEncontrado != NULL)
                 {
                     int opcaoAtualizar;
@@ -150,7 +268,10 @@ void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigo
                         break;
                     case 3:
                         printf("Digite a nova Data de Nascimento (DD/MM/AAAA): ");
-                        scanf(" %10s", profEncontrado->data_nascimento);
+                        scanf("%02d/%02d/%04d",
+                              &profEncontrado->data_nascimento.dia,
+                              &profEncontrado->data_nascimento.mes,
+                              &profEncontrado->data_nascimento.ano);
                         printf("Data de Nascimento atualizada com sucesso!\n");
                         break;
                     case 4:
@@ -187,7 +308,7 @@ void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigo
                 int idBusca;
                 printf("Qual professor voce deseja DELETAR?\n");
                 listar_professores(*qtdProfessores, listaProfessores);
-                
+
                 printf("Digite o ID do professor: ");
                 scanf("%d", &idBusca);
 
@@ -200,6 +321,67 @@ void menuProfessor(Professor *listaProfessores, int *qtdProfessores, int *codigo
                 {
                     printf("Erro: Professor com ID %d nao encontrado. Exclusao abortada.\n", idBusca);
                 }
+            }
+            break;
+        }
+        case 5:
+        {
+            if (*qtdProfessores == 0)
+            {
+                printf("A lista de professores esta vazia.\n");
+            }
+            else
+            {
+                char sexoBusca;
+                printf("\nQual sexo voce deseja listar? (M/F): ");
+                scanf(" %c", &sexoBusca);
+                listar_professores_por_sexo(*qtdProfessores, listaProfessores, sexoBusca);
+            }
+            break;
+        }
+
+        case 6:
+        {
+            if (*qtdProfessores == 0)
+            {
+                printf("A lista de professores esta vazia.\n");
+            }
+            else
+            {
+                listar_professores_ordenados_por_nome(*qtdProfessores, listaProfessores);
+            }
+            break;
+        }
+
+        case 7:
+        {
+            if (*qtdProfessores == 0)
+            {
+                printf("A lista de professores esta vazia.\n");
+            }
+            else
+            {
+                listar_professores_por_data(*qtdProfessores, listaProfessores);
+            }
+            break;
+        }
+
+        case 8:
+        {
+            if (*qtdProfessores == 0) {
+                printf("A lista de professores esta vazia.\n");
+            } else {
+                int mes;
+                do {
+                    printf("Digite o numero do mes que deseja buscar (1 a 12): ");
+                    scanf("%d", &mes);
+                    
+                    if (mes < 1 || mes > 12) {
+                        printf("Erro: Mes invalido! Digite um valor entre 1 e 12.\n");
+                    }
+                } while (mes < 1 || mes > 12);
+
+                listar_aniversariantes_do_mes_prof(*qtdProfessores, listaProfessores, mes);
             }
             break;
         }
