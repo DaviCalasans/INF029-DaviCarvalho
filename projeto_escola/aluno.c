@@ -1,17 +1,105 @@
 #include "aluno.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+int comparar_datas(Data d1, Data d2) {
+    if (d1.ano != d2.ano) return d1.ano - d2.ano;
+    
+    if (d1.mes != d2.mes) return d1.mes - d2.mes;
+    
+    return d1.dia - d2.dia;
+}
+
+void listar_alunos_por_data(int qtdAlunos, Aluno *listaAlunos)
+{
+    if (qtdAlunos <= 1) {
+        listar_alunos(qtdAlunos, listaAlunos);
+        return;
+    }
+
+    for (int i = 0; i < qtdAlunos - 1; i++)
+    {
+        for (int j = i + 1; j < qtdAlunos; j++)
+        {
+            if (comparar_datas(listaAlunos[i].data_nascimento, listaAlunos[j].data_nascimento) > 0)
+            {
+                Aluno temp = listaAlunos[i];
+                listaAlunos[i] = listaAlunos[j];
+                listaAlunos[j] = temp;
+            }
+        }
+    }
+
+    printf("\n--- ALUNOS ORDENADOS POR IDADE (Mais velhos primeiro) ---\n");
+    listar_alunos(qtdAlunos, listaAlunos);
+}
+
+void listar_alunos_ordenados_por_nome(int qtdAlunos, Aluno *listaAlunos)
+{
+    if (qtdAlunos <= 1)
+    {
+        listar_alunos(qtdAlunos, listaAlunos);
+        return;
+    }
+
+    for (int i = 0; i < qtdAlunos - 1; i++)
+    {
+        for (int j = i + 1; j < qtdAlunos; j++)
+        {
+            if (strcmp(listaAlunos[i].nome, listaAlunos[j].nome) > 0)
+            {
+                Aluno temp = listaAlunos[i];
+                listaAlunos[i] = listaAlunos[j];
+                listaAlunos[j] = temp;
+            }
+        }
+    }
+    printf("\n--- ALUNOS ORDENADOS DE A a Z ---\n");
+    listar_alunos(qtdAlunos, listaAlunos);
+}
+
+void listar_alunos_por_sexo(int qtdAlunos, Aluno *listaAlunos, char sexoBuscado)
+{
+    int encontrados = 0;
+
+    char sexoMaiusculo = toupper(sexoBuscado);
+
+    printf("\n--- RESULTADO DA BUSCA (SEXO: %c) ---\n", sexoMaiusculo);
+
+    for (int i = 0; i < qtdAlunos; i++)
+    {
+        if (toupper(listaAlunos[i].sexo) == sexoMaiusculo)
+        {
+            printf("ID: %d | Matricula: %d | Nome: %s | Sexo: %c\n",
+                   listaAlunos[i].id,
+                   listaAlunos[i].matricula,
+                   listaAlunos[i].nome,
+                   listaAlunos[i].sexo);
+            encontrados++;
+        }
+    }
+
+    if (encontrados == 0)
+    {
+        printf(" -> Nenhum aluno do sexo '%c' foi encontrado.\n", sexoMaiusculo);
+    }
+    printf("--------------------------------------\n");
+}
 
 bool deletar_aluno(int *qtdAlunos, Aluno *listaAlunos, int id)
 {
     for (int i = 0; i < *qtdAlunos; i++)
     {
-        if(listaAlunos[i].id == id){
-            for(int j = i; j < *qtdAlunos - 1;j++){
+        if (listaAlunos[i].id == id)
+        {
+            for (int j = i; j < *qtdAlunos - 1; j++)
+            {
                 listaAlunos[j] = listaAlunos[j + 1];
             }
-        (*qtdAlunos)--;
-        return true;
+            (*qtdAlunos)--;
+            return true;
         }
     }
 
@@ -22,12 +110,14 @@ void listar_alunos(int qtdAlunos, Aluno *listaAlunos)
 {
     for (int i = 0; i < qtdAlunos; i++)
     {
-        printf("ID: %d | Matricula aluno: %d | Nome aluno: %s | Sexo aluno: %c | Data de Nascimento aluno: %s | CPF aluno: %s\n",
+        printf("ID: %d | Matricula aluno: %d | Nome aluno: %s | Sexo aluno: %c | Data de Nasc: %02d/%02d/%04d\n | CPF aluno: %s\n",
                listaAlunos[i].id,
                listaAlunos[i].matricula,
                listaAlunos[i].nome,
                listaAlunos[i].sexo,
-               listaAlunos[i].data_nascimento,
+               listaAlunos[i].data_nascimento.dia,
+               listaAlunos[i].data_nascimento.mes,
+               listaAlunos[i].data_nascimento.ano,
                listaAlunos[i].cpf);
     }
 };
@@ -58,6 +148,9 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno)
         printf("2 - Para listar aluno\n");
         printf("3 - Para atualizar aluno\n");
         printf("4 - Para deletar aluno\n");
+        printf("5 - para listar por Sexo\n");
+        printf("6 - para listar ordenado por nome\n");
+        printf("7 - para listar por data de nascimento\n");
         scanf("%d", &opcao);
 
         switch (opcao)
@@ -81,11 +174,28 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno)
                 printf("Nome:\n");
                 scanf(" %99[^\n]", listaAlunos[*qtdAlunos].nome);
 
-                printf("Sexo (M/F):\n");
-                scanf(" %c", &listaAlunos[*qtdAlunos].sexo);
+                char sexoLido;
+                do
+                {
+                    printf("Sexo (M/F):\n");
+                    scanf(" %c", &sexoLido);
+
+                    sexoLido = toupper(sexoLido);
+
+                    if (sexoLido != 'M' && sexoLido != 'F')
+                    {
+                        printf("Erro: Entrada invalida! Digite apenas 'M' para Masculino ou 'F' para Feminino.\n");
+                    }
+
+                } while (sexoLido != 'M' && sexoLido != 'F');
+
+                listaAlunos[*qtdAlunos].sexo = sexoLido;
 
                 printf("Data de Nascimento (dd/mm/aaaa):\n");
-                scanf(" %10s", listaAlunos[*qtdAlunos].data_nascimento);
+                scanf("%02d/%02d/%04d",
+                      &listaAlunos[*qtdAlunos].data_nascimento.dia,
+                      &listaAlunos[*qtdAlunos].data_nascimento.mes,
+                      &listaAlunos[*qtdAlunos].data_nascimento.ano);
 
                 printf("CPF (somente números):\n");
                 scanf(" %11s", listaAlunos[*qtdAlunos].cpf);
@@ -184,16 +294,62 @@ void menuAlunos(Aluno *listaAlunos, int *qtdAlunos, int *codigoAluno)
             listar_alunos(*qtdAlunos, listaAlunos);
             printf("Digite o ID: ");
             scanf("%d", &idDeletarAluno);
-            
+
             bool resultDeletar = deletar_aluno(qtdAlunos, listaAlunos, idDeletarAluno);
 
-            if(!resultDeletar){
+            if (!resultDeletar)
+            {
                 printf("O ID: %d não foi encontrado \n", idDeletarAluno);
-            } else {
+            }
+            else
+            {
                 printf("O aluno foi deletado com sucesso! A quantida de alunos agora é %d \n", *qtdAlunos);
             }
         }
         break;
+
+        case 5:
+        {
+            if (*qtdAlunos == 0)
+            {
+                printf("A lista de alunos esta vazia.\n");
+            }
+            else
+            {
+                char sexoBusca;
+                printf("\nQual sexo voce deseja listar? (M/F): ");
+
+                scanf(" %c", &sexoBusca);
+
+                listar_alunos_por_sexo(*qtdAlunos, listaAlunos, sexoBusca);
+            }
+            break;
+        }
+        case 6:
+        {
+            if (*qtdAlunos == 0)
+            {
+                printf("A lista de alunos esta vazia.\n");
+            }
+            else
+            {
+                listar_alunos_ordenados_por_nome(*qtdAlunos, listaAlunos);
+            }
+            break;
+        }
+        case 7: // LISTAR ORDENADO POR IDADE (MAIS VELHOS)
+        {
+            if (*qtdAlunos == 0)
+            {
+                printf("A lista de alunos esta vazia.\n");
+            }
+            else
+            {
+                // Chama a função mágica que construímos!
+                listar_alunos_por_data(*qtdAlunos, listaAlunos);
+            }
+            break;
+        }
 
         default:
             printf("Opção inválida\n");
