@@ -30,6 +30,9 @@ int addDiaMesAno(DiaMesAno * diamesano,int resultado, int controlador){
         case 1:
         diamesano->mes = resultado;
             break;
+        case 2:
+        diamesano->ano = resultado;
+            break;
     }
 
     printf("Data: %d/%d/%d\n", diamesano->dia, diamesano->mes, diamesano->ano);
@@ -41,17 +44,16 @@ int q1(char data[])
     diamesano = malloc(sizeof(DiaMesAno) * 3);
     int datavalida = 1;  
     int tam = strlen(data);
-    char dia[2];
     int resultado = 0;
     int guardado = 0;
     int controlador = 0;
-    int barraValida = 0; //0 false 1 true
     int ant = 0;
+    int lidos = 0;
 
-  //quebrar a string data em strings sDia, sMes, sAno
-  for(int i = 0; i < tam; i++){
-    char c = data[i];
-    int n = c - '0';
+    for(int i = 0; i < tam; i++){
+        char c = data[i];
+        int n = c - '0';
+        printf("valor de n: %d\n", n);
 
     if(data[0] == '/'){
         printf("Data inválida");
@@ -67,6 +69,7 @@ int q1(char data[])
         controlador++;
         resultado = 0;
         guardado = 0;
+        lidos = 0;
     }
     
 
@@ -74,7 +77,8 @@ int q1(char data[])
         printf("Número negativo: %d. Data inválida", n);
     } else if(n > 9){
         printf("Número maior que 9. Data inválida");
-    } else {
+    } else if (n >= 0) {
+        lidos++;
         resultado = (guardado * 10) + n;
         guardado = n;
         // printf("Controlador: %d\n", controlador);
@@ -83,7 +87,7 @@ int q1(char data[])
 
     // printf("O valor do resultado foi: %d\n", resultado);
     // printf("O valor do diamesano foi: %d\n", diamesano->mes);
-
+    printf("Lidos: %d\n",lidos);
     // printf("%d\n", n);
     ant = n;
   }
@@ -96,7 +100,7 @@ int q1(char data[])
 }
 
 int main(){
-    q1("29/10");
+    q1("29/03/2024");
 
     return 0;
 }
