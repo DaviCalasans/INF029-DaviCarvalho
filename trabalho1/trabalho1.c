@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include "trabalho1.h" 
 #include <stdlib.h>
+#include <string.h>
 
 DataQuebrada quebraData(char data[]);
 
@@ -89,21 +90,172 @@ int teste(int a)
     Não utilizar funções próprias de string (ex: strtok)   
     pode utilizar strlen para pegar o tamanho da string
  */
-int q1(char data[])
+
+
+typedef struct
 {
-  int datavalida = 1;
+    int dia;
+    int mes;
+    int ano;
+} DiaMesAno;
 
-  //quebrar a string data em strings sDia, sMes, sAno
+int validarDiaParaMes(int dia, int mes, int ano)
+{
+    int diasPorMes[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
+    if (mes == 2 && ((ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0)))
+    {
+        diasPorMes[2] = 29;
+    }
 
-  //printf("%s\n", data);
-
-  if (datavalida)
-      return 1;
-  else
-      return 0;
+    if (dia < 1 || dia > diasPorMes[mes])
+    {
+        return 0;
+    }
+    return 1; 
 }
 
+int addDiaMesAno(DiaMesAno *diamesano, int resultado, int controlador, int temZero, int *qtdCaractere)
+{
+
+    switch (controlador)
+    {
+    case 0:
+        diamesano->dia = resultado;
+        (*qtdCaractere)++;
+        break;
+    case 1:
+        diamesano->mes = resultado;
+        (*qtdCaractere)++;
+        break;
+    case 2:
+        (*qtdCaractere)++;
+        diamesano->ano = resultado;
+        break;
+    }
+
+}
+
+int validarData(DiaMesAno *diamesano, int controlador, int *qtdCaractere)
+{
+    switch (controlador)
+    {
+    case 0:
+        if (*qtdCaractere < 1 || *qtdCaractere > 2)
+        {
+            return 0;
+        }
+        if (diamesano->dia <= 0 || diamesano->dia > 31)
+        {
+            return 0;
+        }
+        break;
+    case 1:
+        if (*qtdCaractere < 1 || *qtdCaractere > 2)
+        {
+            return 0;
+        }
+        if (diamesano->mes <= 0 || diamesano->mes > 12)
+        {
+            return 0;
+        }
+        break;
+    case 2:
+        if (*qtdCaractere < 2 || *qtdCaractere > 4 || *qtdCaractere == 3)
+        {
+            return 0;
+        }
+        if (diamesano->ano < 0)
+        {
+            return 0;
+        }
+
+        if (!validarDiaParaMes(diamesano->dia, diamesano->mes, diamesano->ano))
+        {
+            return 0;
+        }
+        break;
+    }
+    return 1;
+}
+
+int q1(char data[])
+{
+    DiaMesAno temp = {-1, -1, -1};
+    DiaMesAno *diamesano = &temp;
+
+    int datavalida = 1;
+    int tam = strlen(data);
+    int resultado = 0;
+    int guardado = 0;
+    int controlador = 0;
+    int ant = 0;
+    int lidos = 0;
+    int temZero = 0;
+    int tempCaractere = 0;
+    int *qtdCaractere = &tempCaractere;
+
+    for (int i = 0; i < tam; i++)
+    {
+        char c = data[i];
+        int n = c - '0';
+
+        if (data[0] == '/')
+        {
+            datavalida = 0;
+            break;
+        }
+
+        if (data[i] == '/' && ant < 0)
+        {
+            datavalida = 0;
+            break;
+        }
+
+        if (data[i] == '/')
+        {
+            if (!validarData(diamesano, controlador, qtdCaractere))
+            {
+                datavalida = 0;
+                break;
+            }
+            controlador++;
+            resultado = 0;
+            guardado = 0;
+            lidos = 0;
+            *qtdCaractere = 0;
+        }
+
+        if (data[i] != '/' && n < 0)
+        {
+            datavalida = 0;
+            break;
+        }
+        else if (n > 9)
+        {
+            datavalida = 0;
+            break;
+        }
+        else if (n >= 0)
+        {
+            lidos++;
+            resultado = (guardado * 10) + n;
+            guardado = resultado;
+            addDiaMesAno(diamesano, resultado, controlador, temZero, qtdCaractere);
+        }
+
+        ant = n;
+    }
+    if (!validarData(diamesano, 2, qtdCaractere))
+    {
+        datavalida = 0;
+    }
+
+    if (datavalida)
+        return 1;
+    else
+        return 0;
+}
 
 
 /*
