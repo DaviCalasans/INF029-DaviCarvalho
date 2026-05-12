@@ -366,7 +366,45 @@ DiasMesesAnos q2(char datainicial[], char datafinal[])
  */
 int q3(char *texto, char c, int isCaseSensitive)
 {
-    int qtdOcorrencias = -1;
+    int qtdOcorrencias = 0;
+    int j;
+    char *cpyTxt;
+    cpyTxt = malloc(sizeof(char) * strlen(texto) + 1);
+
+    if (isCaseSensitive != 1)
+    {
+        if (c >= 'a' && c <= 'z')
+        {
+            c = c - 32;
+        }
+
+        for (j = 0; j < strlen(texto); j++)
+        {
+            cpyTxt[j] = texto[j];
+
+            if (cpyTxt[j] >= 'a' && cpyTxt[j] <= 'z')
+            {
+                cpyTxt[j] = cpyTxt[j] - 32;
+            }
+
+            if (cpyTxt[j] == c)
+            {
+                qtdOcorrencias++;
+            }
+        }
+        cpyTxt[j] = '\0';
+    }
+    else
+    {
+        for (int i = 0; i < strlen(texto); i++)
+        {
+
+            if (texto[i] == c)
+            {
+                qtdOcorrencias++;
+            }
+        };
+    }
 
     return qtdOcorrencias;
 }
