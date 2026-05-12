@@ -272,30 +272,86 @@ int q1(char data[])
     4 -> datainicial > datafinal
     Caso o cálculo esteja correto, os atributos qtdDias, qtdMeses e qtdAnos devem ser preenchidos com os valores correspondentes.
  */
+DiasMesesAnos calcularDiferenca(int d1, int m1, int a1, int d2, int m2, int a2)
+{
+    DiasMesesAnos dma;
+    int diasNoMes[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    if ((a2 % 4 == 0 && a2 % 100 != 0) || (a2 % 400 == 0))
+    {
+        diasNoMes[2] = 29;
+    }
+
+    if (d2 < d1)
+    {
+        if (m2 == 1)
+        {
+            d2 = d2 + diasNoMes[12];
+            m2 = 12;
+            a2--;
+        }
+        else
+        {
+            m2--;
+            d2 = d2 + diasNoMes[m2];
+        }
+    }
+    dma.qtdDias = d2 - d1;
+
+    if (m2 < m1)
+    {
+        a2--;
+        m2 = m2 + 12;
+    }
+    dma.qtdMeses = m2 - m1;
+
+    dma.qtdAnos = a2 - a1;
+    dma.retorno = 1;
+
+    return dma;
+}
+
+DiasMesesAnos converterData(char datainicial[], char datafinal[], DiasMesesAnos dma)
+{
+    int ano1 = (datainicial[6] - '0') * 1000 + (datainicial[7] - '0') * 100 + (datainicial[8] - '0') * 10 + (datainicial[9] - '0');
+    int mes1 = (datainicial[3] - '0') * 10 + (datainicial[4] - '0');
+    int dia1 = (datainicial[0] - '0') * 10 + (datainicial[1] - '0');
+    int dataInicialInvertida = (ano1 * 10000) + (mes1 * 100) + dia1;
+
+    int ano2 = (datafinal[6] - '0') * 1000 + (datafinal[7] - '0') * 100 + (datafinal[8] - '0') * 10 + (datafinal[9] - '0');
+    int mes2 = (datafinal[3] - '0') * 10 + (datafinal[4] - '0');
+    int dia2 = (datafinal[0] - '0') * 10 + (datafinal[1] - '0');
+    int dataFinalInvertida = (ano2 * 10000) + (mes2 * 100) + dia2;
+
+    if (dataInicialInvertida > dataFinalInvertida)
+    {
+        dma.retorno = 4;
+        return dma;
+    }
+
+    return calcularDiferenca(dia1, mes1, ano1, dia2, mes2, ano2);
+}
+
 DiasMesesAnos q2(char datainicial[], char datafinal[])
 {
-
-    //calcule os dados e armazene nas três variáveis a seguir
     DiasMesesAnos dma;
 
-    if (q1(datainicial) == 0){
-      dma.retorno = 2;
-      return dma;
-    }else if (q1(datafinal) == 0){
-      dma.retorno = 3;
-      return dma;
-    }else{
-      //verifique se a data final não é menor que a data inicial
-      
-      //calcule a distancia entre as datas
-
-
-      //se tudo der certo
-      dma.retorno = 1;
-      return dma;
-      
+    if (q1(datainicial) == 0)
+    {
+        dma.retorno = 2;
+        return dma;
     }
-    
+    if (q1(datafinal) == 0)
+    {
+        dma.retorno = 3;
+        return dma;
+    }
+    else
+    {
+        dma = converterData(datainicial, datafinal, dma);
+
+        return dma;
+    }
 }
 
 /*
