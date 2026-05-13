@@ -424,9 +424,50 @@ int q3(char *texto, char c, int isCaseSensitive)
         O retorno da função, n, nesse caso seria 1;
 
  */
+int contagemCaracteresAte(const char *str, int bytePos) {
+    int count = 1;
+    for (int i = 0; i < bytePos; i++) {
+        if ((str[i] & 0xC0) != 0x80) count++;
+    }
+    return count;
+}
+
 int q4(char *strTexto, char *strBusca, int posicoes[30])
 {
-    int qtdOcorrencias = -1;
+    int qtdOcorrencias = 0;
+    int i;
+    int tam = strlen(strTexto);
+    int tamBusca = strlen(strBusca);
+    int contPos = 0;
+
+    for (i = 0; i < tam; i++)
+    {
+        if (strBusca[0] == strTexto[i])
+        {
+            int letrasIguais = 1;
+            int p = i + 1;
+            for (int j = 1; j < tamBusca; j++)
+            {
+                if (strBusca[j] == strTexto[p])
+                {
+                    p++;
+                    letrasIguais++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        
+            if (letrasIguais == tamBusca)
+            {
+                posicoes[contPos] = contagemCaracteresAte(strTexto, i);     
+                posicoes[contPos + 1] = contagemCaracteresAte(strTexto, p - 1); 
+                contPos += 2;               
+                qtdOcorrencias++;
+            }
+        }
+    }
 
     return qtdOcorrencias;
 }
