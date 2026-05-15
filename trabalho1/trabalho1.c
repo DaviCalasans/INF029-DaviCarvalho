@@ -484,7 +484,16 @@ int q4(char *strTexto, char *strBusca, int posicoes[30])
 
 int q5(int num)
 {
-
+    int numInvertido = 0;
+    int mod = 0;
+    int mult = 10;
+    while (num > 0)
+    {
+        mod = num % 10;
+        numInvertido = (numInvertido * mult) + mod;
+        num = num / 10;
+    }
+    num = numInvertido;
     return num;
 }
 
