@@ -509,7 +509,42 @@ int q5(int num)
 
 int q6(int numerobase, int numerobusca)
 {
-    int qtdOcorrencias;
+    int qtdOcorrencias = 0;
+    int modBase;
+    int modBusca;
+    int encontrado = 0;
+    int mult = 1;
+    int cpyBusca = numerobusca;
+
+    while (numerobase > 0)
+    {
+        modBase = numerobase % 10;
+        numerobase = numerobase / 10;
+        modBusca = numerobusca % 10;
+
+        if (modBase == modBusca)
+        {
+            encontrado = (modBase * mult) + encontrado;
+            numerobusca = numerobusca / 10;
+            mult *= 10;
+        }
+        else
+        {
+            encontrado = 0;
+            numerobusca = cpyBusca;
+            if (mult != 1)
+            {
+                mult = 1;
+            }
+        }
+        if (encontrado == cpyBusca)
+        {
+            numerobusca = cpyBusca;
+            encontrado = 0;
+            mult = 1;
+            qtdOcorrencias++;
+        }
+    }
     return qtdOcorrencias;
 }
 
