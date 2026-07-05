@@ -200,9 +200,23 @@ Rertono (int)
 */
 int getDadosDeTodasEstruturasAuxiliares(int vetorAux[])
 {
+    int contador = 0;
+    for(int i = 0; i < TAM; i++){
 
-    int retorno = 0;
-    return retorno;
+        No * atual = vetorPrincipal[i].inicio;
+
+        while(atual != NULL){
+            vetorAux[contador] = atual->conteudo;
+            atual = atual->prox;
+            contador++;
+        }
+    }
+
+    if(contador == 0){
+        return TODAS_ESTRUTURAS_AUXILIARES_VAZIAS;
+    }
+    
+    return SUCESSO;
 }
 
 /*
@@ -215,9 +229,27 @@ Rertono (int)
 */
 int getDadosOrdenadosDeTodasEstruturasAuxiliares(int vetorAux[])
 {
+    if(getDadosDeTodasEstruturasAuxiliares(vetorAux) == SUCESSO){
+        int qtdTotalElementos = 0;
+        for(int j = 0; j < TAM; j++){
+            qtdTotalElementos = qtdTotalElementos + vetorPrincipal[j].qtd;
+        }
 
-    int retorno = 0;
-    return retorno;
+        for(int i = 1; i < qtdTotalElementos; i++){
+            int chave = vetorAux[i];
+            int j = i - 1;
+
+            while(j >= 0 && vetorAux[j] > chave){
+                vetorAux[j + 1] = vetorAux[j];
+                j = j - 1;
+            }
+
+            vetorAux[j + 1] = chave;
+        }
+        return SUCESSO;
+    }
+
+    return TODAS_ESTRUTURAS_AUXILIARES_VAZIAS;
 }
 
 /*
