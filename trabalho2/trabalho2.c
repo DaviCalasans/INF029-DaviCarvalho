@@ -166,10 +166,26 @@ Retorno (int)
 */
 int getDadosEstruturaAuxiliar(int posicao, int vetorAux[])
 {
+    if(ehPosicaoValida(posicao) == POSICAO_INVALIDA){
+        return POSICAO_INVALIDA;
+    }
 
-    int retorno = 0;
+    int indice = posicao - 1;
 
-    return retorno;
+    if(vetorPrincipal[indice].tamMaximo == 0){
+        return SEM_ESTRUTURA_AUXILIAR;
+    }
+
+    int contador = 0;
+    No * aux = vetorPrincipal[indice].inicio;
+
+    while(aux != NULL){
+        vetorAux[contador] = aux->conteudo;
+        aux = aux->prox;
+        contador++;
+    }
+
+    return SUCESSO;
 }
 
 /*
@@ -183,11 +199,31 @@ Rertono (int)
 */
 int getDadosOrdenadosEstruturaAuxiliar(int posicao, int vetorAux[])
 {
+    if(ehPosicaoValida(posicao) == POSICAO_INVALIDA){
+        return POSICAO_INVALIDA;
+    }
 
-    int retorno = 0;
+    int indice = posicao - 1;
 
-    
-    return retorno;
+    if(vetorPrincipal[indice].tamMaximo == 0){
+        return SEM_ESTRUTURA_AUXILIAR;
+    }
+
+    getDadosEstruturaAuxiliar(posicao, vetorAux);
+
+    for(int i = 1; i < vetorPrincipal[indice].qtd; i++){
+            int chave = vetorAux[i];
+            int j = i - 1;
+
+            while(j >= 0 && vetorAux[j] > chave){
+                vetorAux[j + 1] = vetorAux[j];
+                j = j - 1;
+            }
+
+            vetorAux[j + 1] = chave;
+    }
+
+    return SUCESSO;
 }
 
 /*
