@@ -131,8 +131,40 @@ Rertono (int)
 */
 int excluirNumeroDoFinaldaEstrutura(int posicao)
 {
-    int retorno = SUCESSO;
-    return retorno;
+    if (ehPosicaoValida(posicao) == POSICAO_INVALIDA)
+    {
+        return POSICAO_INVALIDA;
+    }
+
+    int indice = posicao - 1;
+
+    if(vetorPrincipal[indice].tamMaximo == 0){
+        return SEM_ESTRUTURA_AUXILIAR;
+    }
+
+    if(vetorPrincipal[indice].qtd == 0){
+        return ESTRUTURA_AUXILIAR_VAZIA;
+    }
+
+    No * removido = vetorPrincipal[indice].inicio;
+
+    if(vetorPrincipal[indice].qtd == 1){
+        vetorPrincipal[indice].inicio = NULL;
+    } else {
+        No * atual = vetorPrincipal[indice].inicio;
+        No * anterior = atual;
+        while(atual->prox != NULL){
+            anterior = atual;
+            atual = atual->prox;
+        }
+        anterior->prox = NULL; 
+        removido = atual;
+    }
+
+    free(removido);
+    vetorPrincipal[indice].qtd--;
+    
+    return SUCESSO;
 }
 
 /*
