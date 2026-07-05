@@ -182,8 +182,50 @@ Rertono (int)
 */
 int excluirNumeroEspecificoDeEstrutura(int posicao, int valor)
 {
-    int retorno = SUCESSO;
-    return retorno;
+    if (ehPosicaoValida(posicao) == POSICAO_INVALIDA)
+    {
+        return POSICAO_INVALIDA;
+    }
+
+    int indice = posicao - 1;
+
+    if (vetorPrincipal[indice].tamMaximo == 0)
+    {
+        return SEM_ESTRUTURA_AUXILIAR;
+    }
+
+    if (vetorPrincipal[indice].qtd == 0)
+    {
+        return ESTRUTURA_AUXILIAR_VAZIA;
+    }
+
+    No *atual = vetorPrincipal[indice].inicio;
+    No *anterior = NULL;
+
+    while (atual != NULL && atual->conteudo != valor)
+    {
+        anterior = atual;
+        atual = atual->prox;
+    }
+
+    if (atual == NULL)
+    {
+        return NUMERO_INEXISTENTE;
+    }
+
+    if (anterior == NULL)
+    {
+        vetorPrincipal[indice].inicio = atual->prox;
+    }
+    else
+    {
+        anterior->prox = atual->prox;
+    }
+
+    free(atual);
+    vetorPrincipal[indice].qtd--;
+
+    return SUCESSO;
 }
 
 
