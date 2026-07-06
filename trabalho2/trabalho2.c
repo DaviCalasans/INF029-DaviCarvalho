@@ -375,9 +375,27 @@ Rertono (int)
 */
 int modificarTamanhoEstruturaAuxiliar(int posicao, int novoTamanho)
 {
+    if (ehPosicaoValida(posicao) == POSICAO_INVALIDA)
+    {
+        return POSICAO_INVALIDA;
+    }
 
-    int retorno = 0;
-    return retorno;
+    int indice = posicao - 1;
+
+    if (vetorPrincipal[indice].tamMaximo == 0)
+    {
+        return SEM_ESTRUTURA_AUXILIAR;
+    }
+
+    int novoTotal = vetorPrincipal[indice].tamMaximo + novoTamanho;
+
+    if (novoTotal < 1)
+    {
+        return NOVO_TAMANHO_INVALIDO;
+    }
+
+    vetorPrincipal[indice].tamMaximo = novoTotal;
+    return SUCESSO;
 }
 
 /*
