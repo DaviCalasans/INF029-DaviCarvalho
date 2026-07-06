@@ -375,9 +375,35 @@ Rertono (int)
 */
 int modificarTamanhoEstruturaAuxiliar(int posicao, int novoTamanho)
 {
+    if(ehPosicaoValida(posicao) == POSICAO_INVALIDA){
+        return POSICAO_INVALIDA;
+    }
+    
+    int indice = posicao - 1;
 
-    int retorno = 0;
-    return retorno;
+    if(vetorPrincipal[indice].tamMaximo == 0){
+        return SEM_ESTRUTURA_AUXILIAR;
+    }
+
+    int novoTam = vetorPrincipal[indice].tamMaximo + novoTamanho;
+
+    if(novoTam < 1){
+        return NOVO_TAMANHO_INVALIDO;
+    }
+
+    vetorPrincipal[indice].tamMaximo = novoTam;
+    
+    if (novoTamanho < 0)
+    {
+        int excedente = vetorPrincipal[indice].qtd - novoTam;
+
+        for (int i = 0; i < excedente; i++)
+        {
+            excluirNumeroDoFinaldaEstrutura(posicao);
+        }
+    }
+
+    return SUCESSO;
 }
 
 /*
@@ -391,8 +417,21 @@ Retorno (int)
 */
 int getQuantidadeElementosEstruturaAuxiliar(int posicao)
 {
+    if(ehPosicaoValida(posicao) == POSICAO_INVALIDA){
+        return POSICAO_INVALIDA;
+    }
 
-    int retorno = 0;
+    int indice = posicao - 1;
+
+    if(vetorPrincipal[indice].tamMaximo == 0){
+        return SEM_ESTRUTURA_AUXILIAR;
+    }
+
+    if(vetorPrincipal[indice].qtd == 0){
+        return ESTRUTURA_AUXILIAR_VAZIA;
+    }
+
+    int retorno = vetorPrincipal[indice].qtd;
 
     return retorno;
 }
