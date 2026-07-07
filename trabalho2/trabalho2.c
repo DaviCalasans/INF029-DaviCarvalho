@@ -443,10 +443,63 @@ Retorno (No*)
     NULL, caso não tenha nenhum número nas listas
     No*, ponteiro para o início da lista com cabeçote
 */
+No * iniciar_lista(){
+    No * cabecote = (No*) malloc(sizeof(No));
+    
+    if(cabecote == NULL){
+        return NULL;
+    }
+
+    cabecote->prox = NULL;
+
+    return cabecote;
+}
+
+No * criar_no(int valor){
+    No * novo = (No*) malloc(sizeof(No));
+
+    if(novo == NULL){
+        return NULL;
+    }
+
+    novo->conteudo = valor;
+    novo->prox = NULL;
+
+    return novo;
+}
+
+void inserir_no_inicio(No * cabecote, int valor){
+    No * novo = criar_no(valor);
+
+    if(novo == NULL){
+        return;
+    }
+
+    novo->prox = cabecote->prox;
+    cabecote->prox = novo;
+}
+
 No *montarListaEncadeadaComCabecote()
 {
+    No * lista = iniciar_lista();
 
-    return NULL;
+    int vet[100];
+    int qtdTotalElementos = 0;
+
+    
+    
+    if(getDadosDeTodasEstruturasAuxiliares(vet) == SUCESSO){
+
+        for(int j = 0; j < TAM; j++){
+            qtdTotalElementos = qtdTotalElementos + vetorPrincipal[j].qtd;
+        }
+    }
+
+    for(int i = 0; i < qtdTotalElementos; i++){
+            inserir_no_inicio(lista, vet[i]);
+    }
+
+    return lista;
 }
 
 /*
