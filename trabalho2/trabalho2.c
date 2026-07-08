@@ -375,26 +375,34 @@ Rertono (int)
 */
 int modificarTamanhoEstruturaAuxiliar(int posicao, int novoTamanho)
 {
-    if (ehPosicaoValida(posicao) == POSICAO_INVALIDA)
-    {
+    if(ehPosicaoValida(posicao) == POSICAO_INVALIDA){
         return POSICAO_INVALIDA;
     }
-
+    
     int indice = posicao - 1;
 
-    if (vetorPrincipal[indice].tamMaximo == 0)
-    {
+    if(vetorPrincipal[indice].tamMaximo == 0){
         return SEM_ESTRUTURA_AUXILIAR;
     }
 
-    int novoTotal = vetorPrincipal[indice].tamMaximo + novoTamanho;
+    int novoTam = vetorPrincipal[indice].tamMaximo + novoTamanho;
 
-    if (novoTotal < 1)
-    {
+    if(novoTam < 1){
         return NOVO_TAMANHO_INVALIDO;
     }
 
-    vetorPrincipal[indice].tamMaximo = novoTotal;
+    vetorPrincipal[indice].tamMaximo = novoTam;
+    
+    if (novoTamanho < 0)
+    {
+        int excedente = vetorPrincipal[indice].qtd - novoTam;
+
+        for (int i = 0; i < excedente; i++)
+        {
+            excluirNumeroDoFinaldaEstrutura(posicao);
+        }
+    }
+
     return SUCESSO;
 }
 
@@ -409,8 +417,21 @@ Retorno (int)
 */
 int getQuantidadeElementosEstruturaAuxiliar(int posicao)
 {
+    if(ehPosicaoValida(posicao) == POSICAO_INVALIDA){
+        return POSICAO_INVALIDA;
+    }
 
-    int retorno = 0;
+    int indice = posicao - 1;
+
+    if(vetorPrincipal[indice].tamMaximo == 0){
+        return SEM_ESTRUTURA_AUXILIAR;
+    }
+
+    if(vetorPrincipal[indice].qtd == 0){
+        return ESTRUTURA_AUXILIAR_VAZIA;
+    }
+
+    int retorno = vetorPrincipal[indice].qtd;
 
     return retorno;
 }
@@ -422,10 +443,63 @@ Retorno (No*)
     NULL, caso não tenha nenhum número nas listas
     No*, ponteiro para o início da lista com cabeçote
 */
+No * iniciar_lista(){
+    No * cabecote = (No*) malloc(sizeof(No));
+    
+    if(cabecote == NULL){
+        return NULL;
+    }
+
+    cabecote->prox = NULL;
+
+    return cabecote;
+}
+
+No * criar_no(int valor){
+    No * novo = (No*) malloc(sizeof(No));
+
+    if(novo == NULL){
+        return NULL;
+    }
+
+    novo->conteudo = valor;
+    novo->prox = NULL;
+
+    return novo;
+}
+
+void inserir_no_inicio(No * cabecote, int valor){
+    No * novo = criar_no(valor);
+
+    if(novo == NULL){
+        return;
+    }
+
+    novo->prox = cabecote->prox;
+    cabecote->prox = novo;
+}
+
 No *montarListaEncadeadaComCabecote()
 {
+    No * lista = iniciar_lista();
 
-    return NULL;
+    int vet[100];
+    int qtdTotalElementos = 0;
+
+    
+    
+    if(getDadosDeTodasEstruturasAuxiliares(vet) == SUCESSO){
+
+        for(int j = 0; j < TAM; j++){
+            qtdTotalElementos = qtdTotalElementos + vetorPrincipal[j].qtd;
+        }
+    }
+
+    for(int i = 0; i < qtdTotalElementos; i++){
+            inserir_no_inicio(lista, vet[i]);
+    }
+
+    return lista;
 }
 
 /*
