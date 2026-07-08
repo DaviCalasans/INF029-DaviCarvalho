@@ -468,15 +468,24 @@ No * criar_no(int valor){
     return novo;
 }
 
-void inserir_no_inicio(No * cabecote, int valor){
+void inserir_no_final(No * cabecote, int valor){
     No * novo = criar_no(valor);
 
     if(novo == NULL){
         return;
     }
 
-    novo->prox = cabecote->prox;
-    cabecote->prox = novo;
+    No * atual = cabecote->prox;
+
+    while(atual != NULL && atual->prox != NULL){
+        atual = atual->prox;
+    }
+
+    if(atual != NULL){
+        atual->prox = novo;
+    } else {
+        cabecote->prox = novo;
+    }
 }
 
 No *montarListaEncadeadaComCabecote()
@@ -486,17 +495,18 @@ No *montarListaEncadeadaComCabecote()
     int vet[100];
     int qtdTotalElementos = 0;
 
-    
-    
     if(getDadosDeTodasEstruturasAuxiliares(vet) == SUCESSO){
 
         for(int j = 0; j < TAM; j++){
             qtdTotalElementos = qtdTotalElementos + vetorPrincipal[j].qtd;
         }
+    } else {
+        free(lista);
+        return NULL;
     }
 
     for(int i = 0; i < qtdTotalElementos; i++){
-            inserir_no_inicio(lista, vet[i]);
+            inserir_no_final(lista, vet[i]);
     }
 
     return lista;
@@ -508,6 +518,15 @@ Retorno void
 */
 void getDadosListaEncadeadaComCabecote(No *inicio, int vetorAux[])
 {
+    if(inicio == NULL) return;
+
+    No * atual = inicio->prox;
+    int i = 0;
+    while(atual != NULL){
+        vetorAux[i] = atual->conteudo;
+        atual = atual->prox;
+        i++;
+    }
 }
 
 /*
@@ -519,6 +538,18 @@ Retorno
 */
 void destruirListaEncadeadaComCabecote(No **inicio)
 {
+    if(inicio == NULL || *inicio == NULL) return;
+
+    No * proximo = *inicio;
+    No * removido = proximo;
+
+    while(proximo != NULL){
+        proximo = removido->prox;
+        free(removido);
+        removido = proximo;
+    }
+
+    *inicio = NULL;
 }
 
 /*
@@ -544,4 +575,18 @@ para poder liberar todos os espaços de memória das estruturas auxiliares.
 
 void finalizar()
 {
+    for (int i = 0; i < TAM; i++)
+    {
+        No *atual = vetorPrincipal[i].inicio;
+        while (atual != NULL)
+        {
+            No *proximo = atual->prox;
+            free(atual);
+            atual = proximo;
+        }
+
+        vetorPrincipal[i].inicio = NULL;
+        vetorPrincipal[i].tamMaximo = 0;
+        vetorPrincipal[i].qtd = 0;
+    }
 }
